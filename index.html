@@ -16,7 +16,11 @@
               display: ['Space Grotesk', 'sans-serif'],
             },
             colors: {
-              offwhite: '#fafafa',
+              offwhite: '#F5F5F3',
+              denim: '#1C2A39',
+              charcoal: '#1A1A1A',
+              gold: '#C2A878',
+              lightgrey: '#EAEAEA',
             },
             animation: {
               'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
@@ -33,49 +37,90 @@
     </script>
     <style>
       body {
-        background-color: #fafafa;
-        color: #111;
+        background-color: #F5F5F3;
+        color: #1A1A1A;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
       ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #fafafa; }
-      ::-webkit-scrollbar-thumb { background: #ccc; }
-      ::-webkit-scrollbar-thumb:hover { background: #999; }
+      ::-webkit-scrollbar-track { background: #F5F5F3; }
+      ::-webkit-scrollbar-thumb { background: #C2A878; }
+      ::-webkit-scrollbar-thumb:hover { background: #1C2A39; }
+      
+      /* Animations */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .link-underline {
+        position: relative;
+      }
+      .link-underline::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 1px;
+        bottom: -2px;
+        left: 0;
+        background-color: currentColor;
+        transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .link-underline:hover::after {
+        width: 100%;
+      }
+      @keyframes cartBounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+      .cart-bounce {
+        animation: cartBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .parallax-bg {
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
     </style>
   </head>
-  <body class="min-h-screen font-sans bg-offwhite text-[#111] overflow-x-hidden">
+  <body class="min-h-screen font-sans bg-offwhite text-charcoal overflow-x-hidden">
     
     <!-- Navigation -->
     <header id="header" class="fixed top-0 w-full z-40 transition-all duration-300 bg-transparent py-6">
       <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div class="flex items-center gap-4 md:hidden">
+        <div id="mobile-menu-btn" class="flex items-center gap-4 md:hidden opacity-0 pointer-events-none transition-opacity duration-300">
           <button onclick="openMenu()" class="p-2 -ml-2">
             <i data-lucide="menu" class="w-6 h-6"></i>
           </button>
         </div>
         
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide uppercase">
-          <a href="#shop" class="hover:text-gray-500 transition-colors">Shop</a>
-          <a href="#collections" class="hover:text-gray-500 transition-colors">Collections</a>
-          <a href="#about" class="hover:text-gray-500 transition-colors">About</a>
+        <div id="desktop-nav-links" class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide uppercase opacity-0 pointer-events-none transition-opacity duration-300">
+          <a href="#shop" class="link-underline hover:text-gray-500 transition-colors">Shop</a>
+          <a href="#collections" class="link-underline hover:text-gray-500 transition-colors">Collections</a>
+          <a href="#about" class="link-underline hover:text-gray-500 transition-colors">About</a>
         </div>
 
-        <a href="#" class="font-display text-2xl font-bold tracking-tighter uppercase absolute left-1/2 -translate-x-1/2">
+        <a href="#" id="brand-logo" class="font-display text-2xl font-bold tracking-tighter uppercase absolute left-1/2 -translate-x-1/2 text-white transition-colors duration-300">
           Indigo & Co.
         </a>
 
-        <div class="flex items-center gap-4">
-          <button onclick="openCart()" class="relative p-2 -mr-2 hover:opacity-70 transition-opacity">
+        <div id="nav-actions" class="flex items-center gap-4 opacity-0 pointer-events-none transition-opacity duration-300">
+          <button onclick="openCart()" id="cart-icon-btn" class="relative p-2 -mr-2 hover:opacity-70 transition-opacity">
             <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-            <span class="cart-count hidden absolute top-0 right-0 bg-black text-white text-[10px] font-bold w-4 h-4 items-center justify-center rounded-full">0</span>
+            <span class="cart-count hidden absolute top-0 right-0 bg-gold text-white text-[10px] font-bold w-4 h-4 items-center justify-center rounded-full shadow-sm">0</span>
           </button>
         </div>
       </div>
     </header>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-50 bg-white flex flex-col hidden opacity-0 -translate-x-full transition-all duration-300 ease-in-out">
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-offwhite flex flex-col hidden opacity-0 -translate-x-full transition-all duration-300 ease-in-out">
       <div class="p-6 flex justify-between items-center border-b border-gray-100">
         <span class="font-display text-xl font-bold tracking-tighter uppercase">Menu</span>
         <button onclick="closeMenu()" class="p-2 -mr-2">
@@ -92,7 +137,7 @@
 
     <!-- Cart Sidebar -->
     <div id="cart-overlay" class="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300" onclick="closeCart()"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-white z-50 shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out">
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-offwhite z-50 shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out">
       <div class="p-6 flex justify-between items-center border-b border-gray-100">
         <span class="font-display text-lg font-bold tracking-tight uppercase">Your Cart (<span class="cart-count">0</span>)</span>
         <button onclick="closeCart()" class="p-2 -mr-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -109,7 +154,7 @@
           <span class="font-medium uppercase tracking-wider text-sm">Subtotal</span>
           <span id="cart-total" class="font-medium text-lg">₹0</span>
         </div>
-        <button class="w-full bg-black text-white py-4 uppercase tracking-widest text-xs font-bold hover:bg-gray-900 transition-colors flex items-center justify-center gap-2">
+        <button class="w-full bg-denim text-white py-4 uppercase tracking-widest text-xs font-bold hover:bg-charcoal transition-colors flex items-center justify-center gap-2 shadow-lg hover:-translate-y-0.5">
           Checkout <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
@@ -117,19 +162,19 @@
 
     <main>
       <!-- Hero Section -->
-      <section class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-        <div class="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=2000&auto=format&fit=crop" alt="Denim texture" class="w-full h-full object-cover opacity-60 scale-105 animate-[pulse_20s_ease-in-out_infinite_alternate]" />
+      <section class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-charcoal">
+        <div class="absolute inset-0 parallax-bg" style="background-image: url('https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=2000&auto=format&fit=crop');">
+          <div class="absolute inset-0 bg-gradient-to-b from-denim/80 via-charcoal/40 to-charcoal/90"></div>
         </div>
-        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto mt-20">
-          <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.85] mb-6 animate-fade-in-up">
+        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto mt-20 flex flex-col items-center">
+          <h1 class="font-display text-7xl md:text-9xl lg:text-[10rem] font-bold text-white tracking-tighter uppercase leading-[0.8] mb-8 animate-fade-in-up drop-shadow-2xl" style="animation-duration: 1.2s;">
             The New<br/>Standard
           </h1>
-          <p class="text-gray-200 text-sm md:text-base tracking-widest uppercase mb-10 max-w-md mx-auto animate-fade-in-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+          <p class="text-offwhite text-sm md:text-base tracking-[0.2em] uppercase mb-12 max-w-md mx-auto animate-fade-in-up font-light drop-shadow-md" style="animation-delay: 0.4s; animation-fill-mode: both; animation-duration: 1.2s;">
             Premium raw denim crafted for the modern urban lifestyle.
           </p>
-          <div class="animate-fade-in-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
-            <a href="#shop" class="inline-block bg-white text-black px-8 py-4 uppercase tracking-widest text-xs font-bold hover:bg-gray-200 transition-colors duration-300">
+          <div class="animate-fade-in-up" style="animation-delay: 0.6s; animation-fill-mode: both; animation-duration: 1.2s;">
+            <a href="#shop" class="inline-block bg-denim text-white px-10 py-5 uppercase tracking-[0.2em] text-xs font-bold hover:bg-gold hover:-translate-y-1 hover:shadow-2xl shadow-lg transition-all duration-500">
               Explore Collection
             </a>
           </div>
@@ -137,122 +182,119 @@
       </section>
 
       <!-- Featured Collections -->
-      <section id="collections" class="py-24 px-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section id="collections" class="py-32 px-6 max-w-7xl mx-auto reveal">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center">
           <!-- Collection 1 -->
-          <div class="group relative h-[60vh] overflow-hidden bg-gray-100 cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop" alt="Slim Fit" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-            <div class="absolute bottom-8 left-8">
-              <h3 class="text-white font-display text-2xl font-bold uppercase tracking-tight mb-2">Slim Fit</h3>
-              <span class="text-white/80 text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-colors">
-                Shop Now <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
+          <div class="md:col-span-7 group relative h-[70vh] overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-lightgrey">
+            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop" alt="Slim Fit" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-charcoal/20 group-hover:bg-charcoal/50 transition-colors duration-700"></div>
+            <div class="absolute inset-0 p-10 flex flex-col justify-end">
+              <h3 class="text-white font-display text-4xl font-bold uppercase tracking-tight mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Slim Fit</h3>
+              <span class="text-white/0 text-sm uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                Shop Collection <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </span>
             </div>
           </div>
-          <!-- Collection 2 -->
-          <div class="group relative h-[60vh] overflow-hidden bg-gray-100 cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?q=80&w=800&auto=format&fit=crop" alt="Relaxed Fit" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-            <div class="absolute bottom-8 left-8">
-              <h3 class="text-white font-display text-2xl font-bold uppercase tracking-tight mb-2">Relaxed Fit</h3>
-              <span class="text-white/80 text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-colors">
-                Shop Now <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
-              </span>
+          <!-- Collection 2 & 3 -->
+          <div class="md:col-span-5 flex flex-col gap-8 md:gap-16 md:mt-32">
+            <div class="group relative h-[50vh] overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-lightgrey">
+              <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?q=80&w=800&auto=format&fit=crop" alt="Relaxed Fit" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-charcoal/20 group-hover:bg-charcoal/50 transition-colors duration-700"></div>
+              <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                <h3 class="text-white font-display text-3xl font-bold uppercase tracking-tight mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Relaxed Fit</h3>
+                <span class="text-white/0 text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                  Shop Collection <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </span>
+              </div>
             </div>
-          </div>
-          <!-- Collection 3 -->
-          <div class="group relative h-[60vh] overflow-hidden bg-gray-100 cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=800&auto=format&fit=crop" alt="Outerwear" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-            <div class="absolute bottom-8 left-8">
-              <h3 class="text-white font-display text-2xl font-bold uppercase tracking-tight mb-2">Outerwear</h3>
-              <span class="text-white/80 text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-colors">
-                Shop Now <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
-              </span>
+            <div class="group relative h-[50vh] overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-lightgrey">
+              <img src="https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=800&auto=format&fit=crop" alt="Outerwear" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-charcoal/20 group-hover:bg-charcoal/50 transition-colors duration-700"></div>
+              <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                <h3 class="text-white font-display text-3xl font-bold uppercase tracking-tight mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Outerwear</h3>
+                <span class="text-white/0 text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-white transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                  Shop Collection <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Product Grid -->
-      <section id="shop" class="py-24 px-6 max-w-7xl mx-auto border-t border-gray-200">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
-          <div>
-            <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tighter uppercase mb-4">New Arrivals</h2>
-            <p class="text-gray-500 max-w-md">Discover our latest collection of premium denim, designed for durability and timeless style.</p>
-          </div>
+      <section id="shop" class="py-32 px-6 max-w-7xl mx-auto reveal">
+        <div class="flex flex-col items-center text-center mb-20">
+          <h2 class="font-display text-5xl md:text-6xl font-bold tracking-tighter uppercase mb-6">New Arrivals</h2>
+          <p class="text-gray-500 max-w-lg font-light text-lg mb-12">Discover our latest collection of premium denim, designed for durability and timeless style.</p>
           
           <!-- Filters -->
-          <div class="flex flex-wrap gap-2 md:gap-4">
-            <button data-filter="All" class="filter-btn px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-all duration-300 border-black bg-black text-white">All</button>
-            <button data-filter="Slim Fit" class="filter-btn px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-all duration-300 border-gray-200 text-gray-500 hover:border-gray-400">Slim Fit</button>
-            <button data-filter="Relaxed Fit" class="filter-btn px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-all duration-300 border-gray-200 text-gray-500 hover:border-gray-400">Relaxed Fit</button>
-            <button data-filter="Regular Fit" class="filter-btn px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-all duration-300 border-gray-200 text-gray-500 hover:border-gray-400">Regular Fit</button>
-            <button data-filter="Outerwear" class="filter-btn px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-all duration-300 border-gray-200 text-gray-500 hover:border-gray-400">Outerwear</button>
+          <div class="flex flex-wrap justify-center gap-4">
+            <button data-filter="All" class="filter-btn px-6 py-3 text-[10px] uppercase tracking-[0.2em] rounded-full border transition-all duration-500 border-charcoal bg-charcoal text-white hover:scale-105 shadow-sm hover:shadow-md">All</button>
+            <button data-filter="Slim Fit" class="filter-btn px-6 py-3 text-[10px] uppercase tracking-[0.2em] rounded-full border transition-all duration-500 border-gray-200 text-gray-500 hover:border-charcoal hover:text-charcoal hover:scale-105 shadow-sm hover:shadow-md">Slim Fit</button>
+            <button data-filter="Relaxed Fit" class="filter-btn px-6 py-3 text-[10px] uppercase tracking-[0.2em] rounded-full border transition-all duration-500 border-gray-200 text-gray-500 hover:border-charcoal hover:text-charcoal hover:scale-105 shadow-sm hover:shadow-md">Relaxed Fit</button>
+            <button data-filter="Regular Fit" class="filter-btn px-6 py-3 text-[10px] uppercase tracking-[0.2em] rounded-full border transition-all duration-500 border-gray-200 text-gray-500 hover:border-charcoal hover:text-charcoal hover:scale-105 shadow-sm hover:shadow-md">Regular Fit</button>
+            <button data-filter="Outerwear" class="filter-btn px-6 py-3 text-[10px] uppercase tracking-[0.2em] rounded-full border transition-all duration-500 border-gray-200 text-gray-500 hover:border-charcoal hover:text-charcoal hover:scale-105 shadow-sm hover:shadow-md">Outerwear</button>
           </div>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
           <!-- Products injected here -->
         </div>
       </section>
 
       <!-- Lookbook / Editorial -->
-      <section id="about" class="py-24 bg-black text-white">
+      <section id="about" class="py-32 bg-black border-y border-black text-white">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div class="order-2 md:order-1">
-              <h2 class="font-display text-5xl md:text-7xl font-bold tracking-tighter uppercase mb-6 leading-[0.9]">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
+            <div class="md:col-span-5 order-2 md:order-1 reveal">
+              <h2 class="font-display text-5xl md:text-7xl font-bold tracking-tighter uppercase mb-8 leading-[0.85] text-white">
                 The Craft<br/>Of Denim
               </h2>
-              <p class="text-gray-400 text-lg mb-8 max-w-md">
+              <p class="text-gray-400 text-lg mb-10 leading-relaxed font-light">
                 Every pair of Indigo & Co. jeans is crafted with meticulous attention to detail. We source the finest selvedge denim from heritage mills, ensuring a product that ages beautifully and tells your unique story.
               </p>
-              <a href="#about" class="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-bold hover:text-gray-300 transition-colors border-b border-white pb-1">
+              <a href="#about" class="inline-flex items-center gap-3 text-xs uppercase tracking-[0.2em] font-bold hover:text-gold transition-colors link-underline pb-2 text-white">
                 Read Our Story <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </a>
             </div>
-            <div class="order-1 md:order-2 relative">
-              <div class="aspect-[4/5] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1200&auto=format&fit=crop" alt="Denim craftsmanship" class="w-full h-full object-cover" />
+            <div class="md:col-span-7 order-1 md:order-2 relative reveal" style="transition-delay: 200ms;">
+              <div class="aspect-[4/5] overflow-hidden bg-gray-800 shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1200&auto=format&fit=crop" alt="Denim craftsmanship" class="w-full h-full object-cover transition-transform duration-1000 hover:scale-110" />
               </div>
-              <div class="absolute -bottom-6 -left-6 w-48 h-64 border border-white/20 hidden md:block"></div>
+              <div class="absolute -bottom-12 -left-12 w-64 h-80 border border-white/10 hidden md:block -z-10"></div>
+              <div class="absolute -top-8 -right-8 w-48 h-48 bg-charcoal border border-white/10 hidden md:block -z-10"></div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Testimonials -->
-      <section class="py-24 px-6 max-w-4xl mx-auto text-center">
-        <h2 class="font-display text-3xl font-bold tracking-tighter uppercase mb-16">Word on the Street</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div class="flex flex-col items-center">
-            <div class="text-4xl font-display text-gray-300 mb-4">"</div>
-            <p class="text-gray-600 mb-6 flex-1">"The fit is absolutely perfect. Best pair of raw denim I've owned."</p>
-            <p class="text-sm font-bold uppercase tracking-widest">Alex M.</p>
+      <section class="py-32 px-6 max-w-6xl mx-auto text-center reveal">
+        <h2 class="font-display text-sm font-bold tracking-[0.3em] uppercase mb-20 text-gold">Word on the Street</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+          <div class="flex flex-col items-center bg-white p-10 shadow-sm border border-lightgrey hover:shadow-md transition-shadow duration-300">
+            <p class="text-charcoal text-lg mb-8 flex-1 font-light leading-relaxed">"The fit is absolutely perfect. Best pair of raw denim I've owned."</p>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-denim">Alex M.</p>
           </div>
-          <div class="flex flex-col items-center">
-            <div class="text-4xl font-display text-gray-300 mb-4">"</div>
-            <p class="text-gray-600 mb-6 flex-1">"Incredible craftsmanship. You can feel the quality in the weight of the fabric."</p>
-            <p class="text-sm font-bold uppercase tracking-widest">Sarah T.</p>
+          <div class="flex flex-col items-center bg-white p-10 shadow-sm border border-lightgrey hover:shadow-md transition-shadow duration-300">
+            <p class="text-charcoal text-lg mb-8 flex-1 font-light leading-relaxed">"Incredible craftsmanship. You can feel the quality in the weight of the fabric."</p>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-denim">Sarah T.</p>
           </div>
-          <div class="flex flex-col items-center">
-            <div class="text-4xl font-display text-gray-300 mb-4">"</div>
-            <p class="text-gray-600 mb-6 flex-1">"Finally, a brand that understands modern cuts without sacrificing heritage quality."</p>
-            <p class="text-sm font-bold uppercase tracking-widest">David K.</p>
+          <div class="flex flex-col items-center bg-white p-10 shadow-sm border border-lightgrey hover:shadow-md transition-shadow duration-300">
+            <p class="text-charcoal text-lg mb-8 flex-1 font-light leading-relaxed">"Finally, a brand that understands modern cuts without sacrificing heritage quality."</p>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-denim">David K.</p>
           </div>
         </div>
       </section>
 
       <!-- Newsletter -->
-      <section class="py-24 px-6 bg-gray-100">
-        <div class="max-w-2xl mx-auto text-center">
-          <h2 class="font-display text-3xl font-bold tracking-tighter uppercase mb-4">Join The Club</h2>
-          <p class="text-gray-500 mb-8">Subscribe to receive updates, access to exclusive deals, and more.</p>
-          <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="event.preventDefault()">
-            <input type="email" placeholder="Enter your email address" class="flex-1 bg-transparent border-b border-gray-300 py-3 px-2 focus:outline-none focus:border-black transition-colors placeholder:text-gray-400" required />
-            <button type="submit" class="bg-black text-white px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-gray-800 transition-colors">
+      <section class="py-32 px-6 bg-denim text-white reveal">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-6">Join The Club</h2>
+          <p class="text-offwhite/80 mb-12 font-light text-lg">Subscribe to receive updates, access to exclusive deals, and more.</p>
+          <form class="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border-b border-white/30 focus-within:border-gold transition-colors duration-500" onsubmit="event.preventDefault()">
+            <input type="email" placeholder="Enter your email address" class="flex-1 bg-transparent py-4 px-2 focus:outline-none placeholder:text-white/50 text-white font-light" required />
+            <button type="submit" class="text-white px-8 py-4 uppercase tracking-[0.2em] text-xs font-bold hover:text-gold transition-colors">
               Subscribe
             </button>
           </form>
@@ -261,7 +303,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black text-white py-16 px-6">
+    <footer class="bg-charcoal text-white py-16 px-6">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         <div class="col-span-1 md:col-span-2">
           <h3 class="font-display text-2xl font-bold tracking-tighter uppercase mb-6">Indigo & Co.</h3>
@@ -272,19 +314,19 @@
         <div>
           <h4 class="font-bold uppercase tracking-widest text-xs mb-6">Shop</h4>
           <ul class="space-y-4 text-gray-400 text-sm">
-            <li><a href="#" class="hover:text-white transition-colors">All Products</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Slim Fit</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Relaxed Fit</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Outerwear</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">All Products</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Slim Fit</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Relaxed Fit</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Outerwear</a></li>
           </ul>
         </div>
         <div>
           <h4 class="font-bold uppercase tracking-widest text-xs mb-6">Support</h4>
           <ul class="space-y-4 text-gray-400 text-sm">
-            <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Shipping & Returns</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Size Guide</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">FAQ</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Shipping & Returns</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Size Guide</a></li>
+            <li><a href="#" class="link-underline hover:text-white transition-colors">Contact Us</a></li>
           </ul>
         </div>
       </div>
@@ -325,15 +367,34 @@
       const cartSidebar = document.getElementById('cart-sidebar');
       const mobileMenu = document.getElementById('mobile-menu');
       const header = document.getElementById('header');
+      
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const desktopNavLinks = document.getElementById('desktop-nav-links');
+      const brandLogo = document.getElementById('brand-logo');
+      const navActions = document.getElementById('nav-actions');
 
       // Scroll
       window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
-          header.classList.add('bg-white/90', 'backdrop-blur-md', 'py-4', 'shadow-sm');
+          header.classList.add('bg-offwhite/95', 'backdrop-blur-md', 'py-4', 'shadow-md');
           header.classList.remove('bg-transparent', 'py-6');
+          
+          mobileMenuBtn.classList.remove('opacity-0', 'pointer-events-none');
+          desktopNavLinks.classList.remove('opacity-0', 'pointer-events-none');
+          navActions.classList.remove('opacity-0', 'pointer-events-none');
+          
+          brandLogo.classList.remove('text-white');
+          brandLogo.classList.add('text-charcoal');
         } else {
-          header.classList.remove('bg-white/90', 'backdrop-blur-md', 'py-4', 'shadow-sm');
+          header.classList.remove('bg-offwhite/95', 'backdrop-blur-md', 'py-4', 'shadow-md');
           header.classList.add('bg-transparent', 'py-6');
+          
+          mobileMenuBtn.classList.add('opacity-0', 'pointer-events-none');
+          desktopNavLinks.classList.add('opacity-0', 'pointer-events-none');
+          navActions.classList.add('opacity-0', 'pointer-events-none');
+          
+          brandLogo.classList.add('text-white');
+          brandLogo.classList.remove('text-charcoal');
         }
       });
 
@@ -364,6 +425,14 @@
         }
         renderCart();
         openCart();
+        
+        // Cart bounce animation
+        const cartIconBtn = document.getElementById('cart-icon-btn');
+        if (cartIconBtn) {
+          cartIconBtn.classList.remove('cart-bounce');
+          void cartIconBtn.offsetWidth; // trigger reflow
+          cartIconBtn.classList.add('cart-bounce');
+        }
       }
 
       function updateQuantity(id, delta) {
@@ -454,12 +523,12 @@
       filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
           filterBtns.forEach(b => {
-            b.classList.remove('border-black', 'bg-black', 'text-white');
+            b.classList.remove('border-charcoal', 'bg-charcoal', 'text-white');
             b.classList.add('border-gray-200', 'text-gray-500');
           });
           const target = e.currentTarget;
           target.classList.remove('border-gray-200', 'text-gray-500');
-          target.classList.add('border-black', 'bg-black', 'text-white');
+          target.classList.add('border-charcoal', 'bg-charcoal', 'text-white');
           
           renderProducts(target.dataset.filter);
         });
@@ -467,32 +536,56 @@
 
       function renderProducts(filter) {
         const filtered = filter === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category.includes(filter));
-        productGrid.innerHTML = filtered.map(p => `
-          <div class="group cursor-pointer">
-            <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden mb-4">
-              <img src="${p.image1}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0" />
-              <img src="${p.image2}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100" />
-              <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-                <button onclick="addToCart('${p.id}')" class="w-full bg-white text-black py-3 uppercase tracking-widest text-xs font-bold hover:bg-black hover:text-white transition-colors shadow-lg">
+        productGrid.innerHTML = filtered.map((p, index) => `
+          <div class="group cursor-pointer reveal bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 border border-lightgrey flex flex-col h-full" style="transition-delay: ${index * 100}ms">
+            <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
+              <img src="${p.image1}" class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:opacity-0 group-hover:scale-110" />
+              <img src="${p.image2}" class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-0 group-hover:opacity-100 group-hover:scale-110" />
+              
+              <!-- Quick View Overlay -->
+              <div class="absolute inset-0 bg-charcoal/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex gap-2">
+                <button onclick="addToCart('${p.id}'); event.stopPropagation();" class="flex-1 bg-denim text-white py-3 uppercase tracking-[0.2em] text-[10px] font-bold hover:bg-charcoal transition-colors duration-300 shadow-lg active:scale-95">
                   Add to Cart
+                </button>
+                <button class="w-10 bg-white text-charcoal flex items-center justify-center hover:bg-charcoal hover:text-white transition-colors duration-300 shadow-lg active:scale-95">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
                 </button>
               </div>
             </div>
-            <div>
-              <div class="flex justify-between items-start mb-1">
-                <h3 class="font-medium text-sm">${p.name}</h3>
-                <span class="font-medium text-sm">₹${p.price.toLocaleString('en-IN')}</span>
+            <div class="text-center p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-display text-lg font-medium tracking-tight mb-2 text-charcoal">${p.name}</h3>
+                <p class="text-gray-500 text-xs uppercase tracking-[0.2em] mb-3">${p.category}</p>
               </div>
-              <p class="text-gray-500 text-xs uppercase tracking-wider">${p.category}</p>
+              <span class="font-medium text-sm text-charcoal">₹${p.price.toLocaleString('en-IN')}</span>
             </div>
           </div>
         `).join('');
         lucide.createIcons();
+        observeElements();
+      }
+
+      // Intersection Observer for scroll animations
+      function observeElements() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('active');
+            }
+          });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => {
+          observer.observe(el);
+        });
       }
 
       // Init
       renderProducts('All');
       lucide.createIcons();
+      observeElements();
     </script>
   </body>
 </html>
